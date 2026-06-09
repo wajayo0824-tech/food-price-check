@@ -3,23 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>食材価格チェック｜野菜・肉・卵の値段と買い時を確認</title>
-    <meta name="description" content="農林水産省の食品価格動向調査をもとに、野菜・肉・卵の値段と買い時の目安を確認できるサイトです。">
+    <title>食材価格チェック｜野菜・肉・卵・魚の値段と買い時を確認</title>
+    <meta name="description" content="農林水産省と東京都中央卸売市場の公表データをもとに、野菜・肉・卵・魚の値段と買い時の目安を確認できるサイトです。">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://wajayo0824-tech.github.io/food-price-check/">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="食材価格チェック｜野菜・肉・卵の値段と買い時を確認">
-    <meta property="og:description" content="農林水産省の食品価格動向調査をもとに、食材の値段と買い時の目安を確認できます。">
+    <meta property="og:title" content="食材価格チェック｜野菜・肉・卵・魚の値段と買い時を確認">
+    <meta property="og:description" content="農林水産省と東京都中央卸売市場の公表データをもとに、食材の値段と買い時の目安を確認できます。">
     <meta property="og:url" content="https://wajayo0824-tech.github.io/food-price-check/">
     <meta name="twitter:card" content="summary">
-    <link rel="stylesheet" href="styles.css?v=20260609-2">
+    <link rel="stylesheet" href="styles.css?v=20260609-5">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "食材価格チェック",
         "url": "https://wajayo0824-tech.github.io/food-price-check/",
-        "description": "農林水産省の食品価格動向調査をもとに、野菜・肉・卵の値段と買い時の目安を確認できるサイトです。",
+        "description": "農林水産省と東京都中央卸売市場の公表データをもとに、野菜・肉・卵・魚の値段と買い時の目安を確認できるサイトです。",
         "inLanguage": "ja"
       }
     </script>
@@ -30,17 +30,25 @@
         <div>
           <p class="eyebrow">MAFF food price check concept</p>
           <h1>食材価格チェック</h1>
-          <p class="lead">肉・野菜の小売価格を比べて、今日買うべきかをすばやく判断できます。</p>
+          <p class="lead">肉・野菜・魚の価格を比べて、今日買うべきかをすばやく判断できます。</p>
         </div>
         <div class="status-panel" aria-label="データ更新情報">
           <span>参照候補</span>
-          <strong>農林水産省 食品価格動向調査</strong>
-          <small>野菜は週次、食肉・鶏卵は月次で公表</small>
+          <strong>農林水産省・東京都中央卸売市場</strong>
+          <small>野菜と魚は週次、食肉・鶏卵は月次で公表</small>
         </div>
       </div>
     </header>
 
     <main>
+      <aside id="updateAlert" class="update-alert" role="status" hidden>
+        <div>
+          <strong id="updateAlertTitle">価格データの更新を確認しています</strong>
+          <p id="updateAlertMessage"></p>
+        </div>
+        <a href="https://github.com/wajayo0824-tech/food-price-check/actions" target="_blank" rel="noreferrer">更新状況を見る</a>
+      </aside>
+
       <section class="toolbar" aria-label="表示条件">
         <div class="search-box">
           <label for="search">食材を検索</label>
@@ -50,6 +58,7 @@
           <button class="segment active" data-filter="all" type="button">すべて</button>
           <button class="segment" data-filter="vegetable" type="button">野菜</button>
           <button class="segment" data-filter="meat" type="button">肉・卵</button>
+          <button class="segment" data-filter="fish" type="button">魚</button>
         </div>
         <div class="sort-box">
           <label for="sort">表示順</label>
@@ -62,10 +71,11 @@
       </section>
 
       <div class="data-status">
-        <p class="update-note">更新: 2026年4月公表分 / 農林水産省の最新公表値</p>
+        <p class="update-note">更新: 各機関の最新公表値 / 毎週自動更新</p>
         <nav class="data-links" aria-label="参照データ">
           <a href="https://www.maff.go.jp/j/zyukyu/anpo/kouri/k_yasai/h22index.html" target="_blank" rel="noreferrer">野菜の公式データ</a>
           <a href="https://www.maff.go.jp/j/zyukyu/anpo/kouri/k_gyuniku/index.html" target="_blank" rel="noreferrer">食肉・鶏卵の公式データ</a>
+          <a href="https://www.shijou.metro.tokyo.lg.jp/torihiki/week/suisan" target="_blank" rel="noreferrer">魚の公式データ</a>
         </nav>
       </div>
 
@@ -85,11 +95,46 @@
         <div id="cards" class="cards" aria-live="polite"></div>
       </section>
 
+      <section class="feedback-section" aria-labelledby="feedbackTitle">
+        <div class="feedback-intro">
+          <p class="eyebrow">FEEDBACK</p>
+          <h2 id="feedbackTitle">このサイトについて教えてください</h2>
+          <p>使いやすさや、追加してほしい食材を短く送れます。</p>
+        </div>
+        <form id="feedbackForm" class="feedback-form">
+          <fieldset>
+            <legend>役に立ちましたか？</legend>
+            <div class="feedback-rating">
+              <label><input type="radio" name="rating" value="とても役に立った" required><span>とても役立つ</span></label>
+              <label><input type="radio" name="rating" value="役に立った"><span>役立つ</span></label>
+              <label><input type="radio" name="rating" value="改善してほしい"><span>改善してほしい</span></label>
+            </div>
+          </fieldset>
+          <label class="feedback-field">
+            <span>改善してほしいところ</span>
+            <select id="feedbackType" name="type">
+              <option value="表示・使いやすさ">表示・使いやすさ</option>
+              <option value="価格・データ">価格・データ</option>
+              <option value="追加してほしい食材">追加してほしい食材</option>
+              <option value="その他">その他</option>
+            </select>
+          </label>
+          <label class="feedback-field">
+            <span>コメント</span>
+            <textarea id="feedbackComment" name="comment" rows="4" maxlength="500" placeholder="例：鮭の価格も見たい"></textarea>
+          </label>
+          <button class="feedback-submit" type="submit">意見を送る</button>
+          <p class="feedback-note">送信するとGitHubの確認画面が開きます。投稿にはGitHubへのログインが必要です。</p>
+        </form>
+      </section>
+
       <section class="source-note">
         <h2>データ設計メモ</h2>
         <p>
           農林水産省の「食品価格動向調査」は、小売価格の動きを把握するための公表データです。
           野菜は主要10品目を週1回、食肉・鶏卵は5品目を月1回調査しています。
+          魚は東京都中央卸売市場「水産物の週間市況」の豊洲市場における卸売中値を使用しています。
+          魚の価格はスーパーの小売価格ではありません。
           現在は、公式ページで確認できる最新公表値に基づいて表示しています。
           野菜は令和8年4月27日の週、食肉・鶏卵は令和8年4月13日の週の値です。
           表示価格は全国平均で、地域別・店舗別の実売価格ではありません。
@@ -100,6 +145,7 @@
           <a href="https://www.maff.go.jp/j/zyukyu/anpo/kouri/" target="_blank" rel="noreferrer">食品の価格動向</a>
           <a href="https://www.maff.go.jp/j/zyukyu/anpo/kouri/k_yasai/h22index.html" target="_blank" rel="noreferrer">野菜データ</a>
           <a href="https://www.maff.go.jp/j/zyukyu/anpo/kouri/k_gyuniku/index.html" target="_blank" rel="noreferrer">食肉・鶏卵データ</a>
+          <a href="https://www.shijou.metro.tokyo.lg.jp/torihiki/week/suisan" target="_blank" rel="noreferrer">豊洲市場 水産物の週間市況</a>
         </div>
       </section>
     </main>
@@ -137,6 +183,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260609-2"></script>
+    <script src="script.js?v=20260609-5"></script>
   </body>
 </html>

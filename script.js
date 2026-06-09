@@ -263,12 +263,112 @@ const foods = [
       308,
       309
     ]
+  },
+  {
+    "id": "horse-mackerel",
+    "name": "アジ",
+    "category": "fish",
+    "unit": "円/kg",
+    "accent": "#287e91",
+    "tint": "#e7f3f5",
+    "reference": 599,
+    "sourceDate": "2026年6月第1週",
+    "comment": "豊洲市場の週間市況に掲載された卸売価格の中値です。スーパーなどの小売価格とは異なります。",
+    "history": [
+      594,
+      583,
+      675,
+      572,
+      551,
+      583,
+      637
+    ]
+  },
+  {
+    "id": "mackerel",
+    "name": "サバ",
+    "category": "fish",
+    "unit": "円/kg",
+    "accent": "#426c8c",
+    "tint": "#e9f0f5",
+    "reference": 549,
+    "sourceDate": "2026年6月第1週",
+    "comment": "豊洲市場の週間市況に掲載された卸売価格の中値です。スーパーなどの小売価格とは異なります。",
+    "history": [
+      486,
+      626,
+      581,
+      562,
+      497,
+      518,
+      572
+    ]
+  },
+  {
+    "id": "sardine",
+    "name": "イワシ",
+    "category": "fish",
+    "unit": "円/kg",
+    "accent": "#4e7897",
+    "tint": "#eaf1f6",
+    "reference": 395,
+    "sourceDate": "2026年6月第1週",
+    "comment": "豊洲市場の週間市況に掲載された卸売価格の中値です。スーパーなどの小売価格とは異なります。",
+    "history": [
+      378,
+      389,
+      392,
+      421,
+      400,
+      378,
+      410
+    ]
+  },
+  {
+    "id": "bonito",
+    "name": "カツオ",
+    "category": "fish",
+    "unit": "円/kg",
+    "accent": "#73556f",
+    "tint": "#f2ebf1",
+    "reference": 827,
+    "sourceDate": "2026年6月第1週",
+    "comment": "豊洲市場の週間市況に掲載された卸売価格の中値です。スーパーなどの小売価格とは異なります。",
+    "history": [
+      724,
+      734,
+      864,
+      950,
+      864
+    ]
+  },
+  {
+    "id": "squid",
+    "name": "スルメイカ",
+    "category": "fish",
+    "unit": "円/kg",
+    "accent": "#456d71",
+    "tint": "#e8f0f0",
+    "reference": 1369,
+    "sourceDate": "2026年6月第1週",
+    "comment": "豊洲市場の週間市況に掲載された卸売価格の中値です。スーパーなどの小売価格とは異なります。",
+    "history": [
+      1714,
+      1427,
+      1283,
+      1224,
+      1493,
+      1253,
+      1339,
+      1220
+    ]
   }
 ];
 
 const categoryLabel = {
   vegetable: "野菜",
-  meat: "肉・卵"
+  meat: "肉・卵",
+  fish: "魚"
 };
 
 let activeFilter = "all";
@@ -309,6 +409,7 @@ function displayUnit(food) {
 
 function officialPriceText(food, value = latest(food)) {
   if (food.category === "vegetable") return `公式単価: ${value.toLocaleString()} 円/kg`;
+  if (food.category === "fish") return `豊洲卸売中値: ${value.toLocaleString()} 円/kg`;
   return `公式単価: ${value.toLocaleString()} ${food.unit}`;
 }
 
@@ -345,6 +446,21 @@ function decisionReason(stats) {
   return "価格はおおむね平常圏";
 }
 
+function referenceLabel(food) {
+  return food.category === "fish" ? "直近平均" : "平年目安";
+}
+
+function decisionReasonForFood(food, stats) {
+  const label = referenceLabel(food);
+  if (stats.decision === "buy") return `${label}より ${Math.abs(stats.vsReference).toFixed(1)}% 安い`;
+  if (stats.decision === "wait") return `${label}比 ${signedPercent(stats.vsReference)}`;
+  return food.category === "fish" ? "直近の価格帯とおおむね同じ" : "価格はおおむね平常圏";
+}
+
+function marketLabel(food) {
+  return food.category === "fish" ? "豊洲市場・卸売" : "全国平均";
+}
+
 function signedPercent(value) {
   const sign = value > 0 ? "+" : "";
   return `${sign}${value.toFixed(1)}%`;
@@ -366,14 +482,14 @@ function renderCards() {
         <div class="card-top">
           <div>
             <h3>${food.name}</h3>
-            <p class="card-meta">${categoryLabel[food.category]} / 全国平均・${food.sourceDate}</p>
+            <p class="card-meta">${categoryLabel[food.category]} / ${marketLabel(food)}・${food.sourceDate}</p>
           </div>
         </div>
         <div class="price">${displayPrice(food, stats.current)}<small>${displayUnit(food)}</small></div>
         <p class="official-unit">${officialPriceText(food, stats.current)}</p>
         <div class="decision-card ${stats.decision}">
           <span>${decisionText(stats.decision)}</span>
-          <small>${decisionReason(stats)}</small>
+          <small>${decisionReasonForFood(food, stats)}</small>
         </div>
         <div class="badges">
           <span class="badge">${comparisonLabel(food)} ${signedPercent(stats.week)}</span>
@@ -399,11 +515,13 @@ function comparisonLabel(food) {
 }
 
 function secondaryComparisonLabel(food) {
-  return food.category === "meat" ? "平年" : "前月";
+  if (food.category === "meat") return "平年";
+  if (food.category === "fish") return "直近平均";
+  return "前月";
 }
 
 function secondaryComparisonValue(food, stats) {
-  return food.category === "meat" ? stats.vsReference : stats.month;
+  return food.category === "meat" || food.category === "fish" ? stats.vsReference : stats.month;
 }
 
 function sortFoods(a, b) {
@@ -428,6 +546,7 @@ function sortFoods(a, b) {
 
 function renderTopPicks() {
   const topPicks = foods
+    .filter((food) => food.category !== "fish")
     .map((food) => ({ food, stats: foodStats(food) }))
     .sort((a, b) => a.stats.vsReference - b.stats.vsReference)
     .slice(0, 3);
@@ -438,7 +557,7 @@ function renderTopPicks() {
       <h3>${item.food.name}</h3>
       <strong>${displayPrice(item.food, item.stats.current)}<small>${displayUnit(item.food)}</small></strong>
       <em>${officialPriceText(item.food, item.stats.current)}</em>
-      <p>${decisionReason(item.stats)}</p>
+      <p>${decisionReasonForFood(item.food, item.stats)}</p>
       <button class="text-button" type="button" data-detail="${item.food.id}">詳細を見る</button>
     </article>
   `).join("");
@@ -529,13 +648,13 @@ function openDetail(id) {
   const stats = foodStats(food);
   document.querySelector("#detailCategory").textContent = categoryLabel[food.category];
   document.querySelector("#detailName").textContent = food.name;
-  document.querySelector("#detailDecision").textContent = `${decisionText(stats.decision)}: 平年目安比 ${signedPercent(stats.vsReference)}`;
+  document.querySelector("#detailDecision").textContent = `${decisionText(stats.decision)}: ${referenceLabel(food)}比 ${signedPercent(stats.vsReference)}`;
   document.querySelector("#detailPrice").textContent = `${displayPrice(food, stats.current)} ${displayUnit(food)}`;
   document.querySelector("#detailWeek").previousElementSibling.textContent = comparisonLabel(food);
   document.querySelector("#detailWeek").textContent = signedPercent(stats.week);
   document.querySelector("#detailMonth").previousElementSibling.textContent = secondaryComparisonLabel(food);
   document.querySelector("#detailMonth").textContent = signedPercent(secondaryComparisonValue(food, stats));
-  document.querySelector("#detailComment").textContent = `${food.sourceDate}の公式公表値。${officialPriceText(food, stats.current)}。${food.comment}`;
+  document.querySelector("#detailComment").textContent = `${food.sourceDate}の公表値。${officialPriceText(food, stats.current)}。${food.comment}`;
   document.querySelector("#detailDecision").style.background = stats.decision === "wait" ? "#faece8" : stats.decision === "neutral" ? "#fbf3dd" : "#e9f5ee";
   document.querySelector("#detailDecision").style.color = stats.decision === "wait" ? "#bf4f43" : stats.decision === "neutral" ? "#b48120" : "#2f7d57";
 
@@ -563,4 +682,86 @@ dialog.addEventListener("click", (event) => {
   if (event.target === dialog) dialog.close();
 });
 
+function formatUpdateDate(value) {
+  return new Intl.DateTimeFormat("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Tokyo"
+  }).format(new Date(value));
+}
+
+async function checkUpdateStatus() {
+  const alert = document.querySelector("#updateAlert");
+  const title = document.querySelector("#updateAlertTitle");
+  const message = document.querySelector("#updateAlertMessage");
+  try {
+    const response = await fetch(`data-status.json?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error("status unavailable");
+    const status = await response.json();
+    const lastSuccess = status.lastSuccess ? new Date(status.lastSuccess) : null;
+    const ageDays = lastSuccess
+      ? (Date.now() - lastSuccess.getTime()) / (1000 * 60 * 60 * 24)
+      : Infinity;
+
+    if (status.status === "failed") {
+      title.textContent = "価格データの自動更新に失敗しました";
+      message.textContent = lastSuccess
+        ? `現在は、${formatUpdateDate(status.lastSuccess)}に取得できた価格を表示しています。`
+        : "現在の価格が最新でない可能性があります。";
+      alert.hidden = false;
+      return;
+    }
+
+    if (!lastSuccess) {
+      title.textContent = "価格データの更新日時を確認できません";
+      message.textContent = "価格の公表日を各カードで確認してからご利用ください。";
+      alert.hidden = false;
+      return;
+    }
+
+    if (ageDays > 10) {
+      title.textContent = "価格データの更新が遅れています";
+      message.textContent = `現在は、${formatUpdateDate(status.lastSuccess)}に取得できた価格を表示しています。`;
+      alert.hidden = false;
+      return;
+    }
+
+    document.querySelector(".update-note").textContent =
+      `最終自動更新: ${formatUpdateDate(status.lastSuccess)} / 各機関の最新公表値`;
+  } catch (error) {
+    title.textContent = "更新状況を確認できませんでした";
+    message.textContent = "価格の公表日を各カードで確認してからご利用ください。";
+    alert.hidden = false;
+  }
+}
+
+document.querySelector("#feedbackForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const rating = form.get("rating");
+  const type = form.get("type");
+  const comment = String(form.get("comment") || "").trim() || "コメントなし";
+  const title = `[ご意見] ${type}`;
+  const body = [
+    "## サイトの評価",
+    rating,
+    "",
+    "## ご意見の種類",
+    type,
+    "",
+    "## コメント",
+    comment,
+    "",
+    `閲覧ページ: ${window.location.href}`
+  ].join("\n");
+  const issueUrl = new URL("https://github.com/wajayo0824-tech/food-price-check/issues/new");
+  issueUrl.searchParams.set("title", title);
+  issueUrl.searchParams.set("body", body);
+  window.open(issueUrl.toString(), "_blank", "noopener,noreferrer");
+});
+
 renderCards();
+checkUpdateStatus();

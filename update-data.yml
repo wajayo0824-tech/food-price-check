@@ -1,8 +1,8 @@
-name: Update MAFF food prices
+name: Update food prices
 
 on:
   schedule:
-    # MAFF vegetable data is usually weekly, while meat/egg data is monthly.
+    # Vegetables and Toyosu fish data are weekly; meat/egg data is monthly.
     # Run once a week after Japan business hours.
     - cron: "0 9 * * 2"
   workflow_dispatch:
@@ -28,11 +28,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install openpyxl pypdf
 
-      - name: Update data from MAFF
+      - name: Update published food data
         run: python scripts/update-data.py
 
       - name: Commit updated data
+        if: always()
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Update MAFF food price data"
-          file_pattern: script.js
+          commit_message: "Update published food price data"
+          file_pattern: "script.js data-status.json"
