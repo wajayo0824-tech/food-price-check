@@ -12,7 +12,7 @@
     <meta property="og:description" content="農林水産省の食品価格動向調査をもとに、食材の値段と買い時の目安を確認できます。">
     <meta property="og:url" content="https://wajayo0824-tech.github.io/food-price-check/">
     <meta name="twitter:card" content="summary">
-    <link rel="stylesheet" href="styles.css?v=20260609">
+    <link rel="stylesheet" href="styles.css?v=20260609-2">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,7 +61,13 @@
         </div>
       </section>
 
-      <p class="update-note">更新: 2026年4月公表分 / 農林水産省の最新公表値</p>
+      <div class="data-status">
+        <p class="update-note">更新: 2026年4月公表分 / 農林水産省の最新公表値</p>
+        <nav class="data-links" aria-label="参照データ">
+          <a href="https://www.maff.go.jp/j/zyukyu/anpo/kouri/k_yasai/h22index.html" target="_blank" rel="noreferrer">野菜の公式データ</a>
+          <a href="https://www.maff.go.jp/j/zyukyu/anpo/kouri/k_gyuniku/index.html" target="_blank" rel="noreferrer">食肉・鶏卵の公式データ</a>
+        </nav>
+      </div>
 
       <section class="top-picks" aria-labelledby="topPicksTitle">
         <div class="section-title">
@@ -131,6 +137,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260609"></script>
+    <script src="script.js?v=20260609-2"></script>
   </body>
 </html>

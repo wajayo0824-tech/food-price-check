@@ -212,10 +212,29 @@ select {
 }
 
 .update-note {
-  margin: -4px 0 26px;
+  margin: 0;
   color: var(--muted);
   font-size: 12px;
-  text-align: right;
+}
+
+.data-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px 20px;
+  align-items: center;
+  margin: -4px 0 26px;
+}
+
+.data-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.data-links a {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .section-title {
@@ -577,6 +596,11 @@ canvas {
   .update-note {
     text-align: left;
   }
+
+  .data-status {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 640px) {
@@ -648,8 +672,16 @@ canvas {
   }
 
   .update-note {
-    margin: 0 0 20px;
     line-height: 1.5;
+  }
+
+  .data-status {
+    gap: 6px;
+    margin: 0 0 20px;
+  }
+
+  .data-links {
+    gap: 6px 12px;
   }
 
   .section-title {
@@ -828,5 +860,117 @@ canvas {
 @media (max-width: 370px) {
   .cards {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) and (min-width: 600px) {
+  .header-inner {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 20px;
+    padding: 24px 20px;
+  }
+
+  h1 {
+    font-size: 42px;
+  }
+
+  .lead {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .status-panel {
+    padding: 12px;
+  }
+
+  main {
+    padding: 16px 18px 36px;
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto minmax(140px, 180px);
+    gap: 12px;
+    align-items: end;
+  }
+
+  .search-box,
+  .sort-box {
+    width: 100%;
+  }
+
+  .data-status {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .top-pick-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .top-pick {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .top-pick strong,
+  .top-pick em,
+  .top-pick p,
+  .top-pick .text-button {
+    grid-column: 1 / 3;
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .card {
+    padding: 13px;
+  }
+
+  .card h3 {
+    font-size: 18px;
+  }
+
+  .card-meta {
+    font-size: 10px;
+  }
+
+  .price {
+    margin: 10px 0 5px;
+    font-size: 25px;
+  }
+
+  .price small {
+    display: block;
+    font-size: 10px;
+  }
+
+  .official-unit,
+  .spark {
+    display: none;
+  }
+
+  .decision-card {
+    margin-bottom: 8px;
+    padding: 8px;
+  }
+
+  .decision-card span {
+    font-size: 17px;
+  }
+
+  .decision-card small,
+  .badge {
+    font-size: 9px;
+  }
+
+  .detail-button {
+    min-height: 34px;
+    margin-top: 9px;
+    font-size: 12px;
   }
 }
