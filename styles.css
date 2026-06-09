@@ -670,9 +670,13 @@ canvas {
     margin-bottom: 28px;
   }
 
-  .top-pick-grid,
-  .cards {
+  .top-pick-grid {
     gap: 12px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .top-pick {
@@ -709,37 +713,73 @@ canvas {
 
   .card {
     min-height: 0;
-    padding: 16px;
+    padding: 13px 12px 12px;
   }
 
   .card h3 {
-    font-size: 21px;
+    margin-bottom: 2px;
+    font-size: 17px;
+    line-height: 1.35;
   }
 
   .card-meta {
-    font-size: 13px;
-    line-height: 1.5;
+    min-height: 34px;
+    margin-bottom: 0;
+    font-size: 10px;
+    line-height: 1.35;
   }
 
   .price {
-    margin: 16px 0 12px;
-    font-size: 32px;
+    margin: 10px 0 4px;
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .price small {
+    display: block;
+    margin-top: 3px;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  .official-unit {
+    display: none;
   }
 
   .decision-card {
-    padding: 10px 12px;
+    gap: 1px;
+    margin-bottom: 8px;
+    border-left-width: 4px;
+    padding: 7px 8px;
   }
 
   .decision-card span {
-    font-size: 22px;
+    font-size: 16px;
+  }
+
+  .decision-card small {
+    font-size: 9px;
+    line-height: 1.35;
+  }
+
+  .badges {
+    gap: 4px;
+    margin-bottom: 0;
+  }
+
+  .badge {
+    padding: 4px 6px;
+    font-size: 9px;
   }
 
   .spark {
-    height: 48px;
+    display: none;
   }
 
   .detail-button {
-    min-height: 44px;
+    min-height: 34px;
+    margin-top: 9px;
+    font-size: 12px;
   }
 
   .source-note {
@@ -782,5 +822,11 @@ canvas {
 
   .detail-dialog {
     padding: 16px;
+  }
+}
+
+@media (max-width: 370px) {
+  .cards {
+    grid-template-columns: 1fr;
   }
 }
